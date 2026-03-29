@@ -1,0 +1,488 @@
+% =============================================
+% 导言区
+% =============================================
+\documentclass{xjtureport}
+\usepackage{pdfpages} % required for \includepdf
+
+% =============================================
+% 正文区
+% =============================================
+
+
+\begin{document}
+
+% ===导入实验报告封面==============================
+
+
+% ===正文==============================
+
+
+% 标题（一级居中）
+
+\section{实验一: 2FSK 调制解调实验}
+
+\section{实验目的}
+（1）掌握FSK调制器的工作原理及性能测试；
+
+（2）掌握FSK过零点检测法解调的原理；
+
+（3）学习基于软件无线电技术实现FSK调制、解调的实现方法。
+
+\section{实验器材}
+
+西电通信与实验专业平台（半实物仿真）。
+
+\section{实验内容}
+
+\subsection*{(1)调制}
+
+	  \begin{enumerate}[label=\roman*.]  % 二级编号：i., ii., iii., ...
+		
+		\item 调整“载波频率” $f_c$ 和“频率间隔” $\Delta f$，观察两路载波频率的变化，
+		并记录某一频率间隔下的两个载波频率。
+		
+		\vspace{1em}
+		
+		\textcolor{red}{\textbf{答：}}在设定载波频率 $f_c = 128\,\text{KHz}$、频率间隔 $f_{\Delta} = 64\,\text{KHz}$ 的条件下，
+		两路载波信号的频率分别为：
+		\[
+		f_1 = |f_c + f_{\Delta}| = |128 + 64| = 192\,\text{KHz}, \qquad
+		f_2 = |f_c - f_{\Delta}| = |128 - 64| = 64\,\text{KHz}.
+		\]
+		
+		符合 FSK 调制中 $f_1 = f_c + f_{\Delta}$、$f_2 = f_c - f_{\Delta}$ 的理论关系。
+		 
+		\vspace{1em}
+		
+		\item 记录步骤 (i) 中所用频率间隔时的 2FSK 时域波形，至少三种波形：
+		间隔 > 2*时钟，间隔 = 2*时钟，间隔 < 2*时钟。
+		
+		\vspace{1em}
+		
+		\textbf{实验结果：}
+		
+		 设置载波频率 $f_c = 64\,\text{kHz}$，在相同基带速率 $R_b = 8\,\text{kbit/s}$ 下，
+		 分别取三种频率间隔 $\Delta f$ 满足 $\Delta f > 2R_b$、$\Delta f = 2R_b$、$\Delta f < 2R_b$，
+		 记录对应的 2FSK 时域波形。结果如下图所示（并列三图）：
+		 
+		 \begin{figure}[H]
+			 	\centering
+			 	\begin{subfigure}{0.31\linewidth}
+			 		\centering
+			 		\includegraphics[width=\linewidth]{fsk_fc64k_df32k.png}
+			 		\caption{$\Delta f = 32\,\text{kHz}\,(>2R_b)$}
+			 		\label{fig:fsk_df_gt}
+			 	\end{subfigure}\hfill
+			 	\begin{subfigure}{0.31\linewidth}
+			 		\centering
+			 		\includegraphics[width=\linewidth]{fsk_fc64k_df16k.png}
+			 		\caption{$\Delta f = 16\,\text{kHz}\,(=2R_b)$}
+			 		\label{fig:fsk_df_eq}
+			 	\end{subfigure}\hfill
+			 	\begin{subfigure}{0.31\linewidth}
+			 		\centering
+			 		\includegraphics[width=\linewidth]{fsk_fc64k_df8k.png}
+			 		\caption{$\Delta f = 8\,\text{kHz}\,(<2R_b)$}
+			 		\label{fig:fsk_df_lt}
+			 	\end{subfigure}
+			 	\caption{不同频率间隔 $\Delta f$ 下的 2FSK 时域波形（$f_c=64\,\text{kHz}$）}
+			 	\label{fig:fsk_df_compare}
+		 \end{figure}
+		 
+		 \textbf{分析：}
+		 
+		 \qquad 从图中可见，当基带信号输出“1”时，2FSK 信号的瞬时频率为 $f_c + \Delta f$；
+		 当基带信号输出“0”时，2FSK 信号的瞬时频率为 $f_c - \Delta f$。
+		 随着频率间隔 $\Delta f$ 的减小，高低频信号的差异逐渐减弱，
+		 波形区分度降低，频率跳变不明显。
+		 当 $\Delta f$ 较大时，调制信号的两个频率分量区分明显，
+		 对应的波形在时域上清晰反映基带信号的变化。
+		 
+		 \vspace{1em}
+		 
+		\item 调节“载波频率” $f_c$ 和“频率间隔” $\Delta f$，观察频谱特性的变化。
+		修改基带信号的设置（伪随机序列、自设 “16 比特” 数据：如全 “0” 码，全 “1” 码），
+		观测调制信号的频谱变化并记录波形，并对此刻的基带信号频谱做对比。
+		
+		\vspace{1em}
+		
+		\textbf{实验结果与分析：}
+		
+		为清晰展示载波频率与频率间隔对 FSK 信号频谱的影响，
+		实验分为三组进行观测：
+		
+		\begin{enumerate}[label=\arabic*)]
+			\item \textbf{载波频率对频谱的影响：改变载波频率 $f_c$，固定 $\Delta f = 32\,\text{kHz}$。}
+			
+			由图可见，载波频率改变使频谱中心位置改变，而频谱结构保持不变。
+			
+			\begin{figure}[H]
+				\centering
+				\begin{subfigure}{0.45\linewidth}
+					\centering
+					\includegraphics[width=\linewidth]{fsk_spectrum_fc64k_df32k.png}
+					\caption{$f_c = 64\,\text{kHz}$}
+				\end{subfigure}\hfill
+				\begin{subfigure}{0.45\linewidth}
+					\centering
+					\includegraphics[width=\linewidth]{fsk_spectrum_fc128k_df32k.png}
+					\caption{$f_c = 128\,\text{kHz}$}
+				\end{subfigure}
+				\caption{不同载波频率下 FSK 信号的频谱特性（$\Delta f = 32\,\text{kHz}$）}
+			\end{figure}
+			
+			
+			\item \textbf{频率间隔对频谱的影响：改变频率间隔 $\Delta f$，固定 $f_c = 128\,\text{kHz}$。}
+			
+			由图可见，当 $\Delta f$ 增大时，两个主频分量间距增大。
+			
+			\begin{figure}[H]
+				\centering
+				\begin{subfigure}{0.45\linewidth}
+					\centering
+					\includegraphics[width=\linewidth]{fsk_spectrum_fc128k_df32k.png}
+					\caption{$\Delta f = 32\,\text{kHz}$}
+				\end{subfigure}\hfill
+				\begin{subfigure}{0.45\linewidth}
+					\centering
+					\includegraphics[width=\linewidth]{fsk_spectrum_fc128k_df64k.png}
+					\caption{$\Delta f = 64\,\text{kHz}$}
+				\end{subfigure}
+				\caption{不同频率间隔下 FSK 信号的频谱特性（$f_c = 128\,\text{kHz}$）}
+			\end{figure}
+			
+			\item \textbf{基带信号类型对频谱的影响：改变基带信号类型，固定 $f_c = 128\,\text{kHz}$、$\Delta f = 64\,\text{kHz}$。}
+			
+			由图可见，随机序列信号的频谱在 $f_1$、$f_2$ 处形成两个主峰，全“0”码与全“1”码仅出现单一载波分量，此时只有一种载波频率。
+			
+			\begin{figure}[H]
+				\centering
+				\begin{subfigure}{0.45\linewidth}
+					\centering
+					\includegraphics[width=\linewidth]{全0码时FSK频谱.png}
+					\caption{全0码时的2FSK频谱}
+				\end{subfigure}\hfill
+				\begin{subfigure}{0.45\linewidth}
+					\centering
+					\includegraphics[width=\linewidth]{全1码时FSK频谱.png}
+					\caption{全1码时的2FSK频谱}
+				\end{subfigure}
+				
+				\caption{不同基带信号类型下的 FSK 调制信号频谱对比}
+			\end{figure}
+			
+		\end{enumerate}
+		
+		
+	\item 数据分析：
+	
+	\begin{enumerate}[label=\alph*)]  % 三级编号：a), b), c)...
+		\item 基带信号经 FSK 调制后，频谱的变化情况。
+		
+		\vspace{1em}
+		
+		\textcolor{red}{\textbf{答：}}
+		2FSK 的频谱在 $f_1=f_c+\Delta f$ 与 $f_2=f_c-\Delta f$ 附近形成两个主峰，
+		主瓣宽度与基带速率 $R_b$ 同量级。
+		当输入为伪随机码时出现“双峰连续谱”；当输入为全“0”（或全“1”）时，仅在 $f_2$（或 $f_1$）处出现单一窄谱线。
+		调整 $f_c$ 只会整体平移频谱中心，不改变形状；调整 $\Delta f$ 会改变两主峰间距。
+		
+		\vspace{1em}
+		
+		\item FSK 调制信号的带宽与基带信号速率、两路载波频率的关系。
+		
+		\vspace{1em}
+		
+		\textcolor{red}{\textbf{答：}}
+		两路载波中心分别为 $f_1=f_c+\Delta f$、$f_2=f_c-\Delta f$，相隔 $2\Delta f$。
+		带宽近似为：
+		\[
+		B \approx 2\big(\Delta f + R_b\big),
+		\]
+		即 $\Delta f$ 越大带宽越宽；$R_b$ 越高每个主峰主瓣越宽。$f_c$ 仅决定频谱的中心位置，对带宽大小无直接影响。
+		
+		\vspace{1em}
+		
+		\item 不同的频率间隔对于已调信号频谱有无影响。
+		
+		\vspace{1em}
+		
+		\textcolor{red}{\textbf{答：}}
+		有影响。增大 $\Delta f$ 会将两主峰拉开（主峰间距 $=2\Delta f$），频谱展宽、区分度提高；
+		减小 $\Delta f$ 会使两主峰靠近甚至部分重叠，频谱更紧、区分度下降。
+		
+		\vspace{1em}
+		
+		\item 频率间隔是否会对系统的解调造成影响。
+		
+		\vspace{1em}
+		
+		\textcolor{red}{\textbf{答：}}
+		会。$\Delta f$ 过小导致两路频率不易区分、错误判决概率上升（对噪声更敏感）；
+		适当增大 $\Delta f$ 可提升判决精确度、降低误判，但占用带宽随之增大。
+	\end{enumerate}
+	
+		
+		\end{enumerate}
+		
+\subsection*{(2) FSK 解调观测}
+
+\begin{enumerate}[label=\roman*.]  % 二级编号：i., ii., iii., ...
+	\item 在实验中 FSK 解调采用了过零点检测法。
+	设置基带数据 2P6 为“15-PN”或自行设置“16 比特”数据，速率“8K”，
+	设置“载波频率” $f_c$ 为 128K，“频率间隔” $\Delta f$ 为 64K。
+	示波器同时观测 FSK 调制输入 5TP1 和调制信号实验检测输出 5VT11。
+	观测 FSK 调制经过对零点检测后的波形，在观测不同对零点检测点脉冲流密度的区别；
+	选取合适的频率，记录过零点脉冲疏密的不同。
+	
+	\textbf{实验结果：}
+	FSK 调制经过对零点检测后的波形如图所示：
+	
+	图中，紫色通道（CH3）为原基带信号，
+	黄色通道（CH1）为 FSK 调制信号，包含两种不同频率分量；
+	蓝色通道（CH2）为过零点检测脉冲信号，其脉冲流密度随输入信号频率变化：
+	由图可知，当输入为高频（基带“1”）时，过零点次数增多，脉冲流密度较高；
+	当输入为低频（基带“0”）时，过零点稀疏；
+	
+	\begin{figure}[H]
+		\centering
+		\includegraphics[width=0.45\linewidth]{figures/过零点检测的波形.png}
+		\caption{FSK 信号过零点检测法示意波形}
+	\end{figure}
+	
+	
+	\item 计数输出滤波后输出波形，示波器同步观测滤波后输出 5TP7 和基带信号 2P6，
+	对比波形并记录。
+	
+	\begin{figure}[H]
+		\centering
+		\includegraphics[width=0.8\linewidth]{figures/基带信号与滤波输出.png}
+		\caption{FSK 解调滤波输出信号（5TP7）与基带信号（2P6）波形对比}
+	\end{figure}
+	
+	\textbf{实验结果与分析：}
+	由图可见，黄色通道为基带信号（2P6），蓝色通道为滤波输出信号（5TP7）。
+	滤波输出信号的波形在高、低电平之间平滑变化，能够较好地跟随基带信号的变化。
+	当基带信号为“1”时，滤波输出呈高电平；当基带信号为“0”时，输出呈低电平。
+	
+	经过低通滤波后，原过零检测得到的高密度脉冲流被平滑为模拟电压，
+	实现了对频率高低的积分判决功能。与基带信号对比可见，
+	滤波输出信号与原始基带信号波形在时间上对应良好，
+	延时极小，波形一致性良好，说明解调滤波与判决电路工作正常。
+	
+	\item 判决输出的观测需要对示波器进行一些设置：
+	示波器通道 1 接基带信号 2P6；通道 2 和通道 3 的电压偏置调整为一致
+	（如电压偏差是 1V），同时将两个通道的基线调整至重合。
+	然后通道 2 接判决前的滤波输出 5TP7，通道 3 接判决电平 5TP6，
+	通道 4 接判决后输出 5TP3。
+	结合当前的判决电平 5TP6，判断判决后数据是否正确。
+	用鼠标修改当前的判决电平，观测 5TP6 的变化以及判决后 5TP3 的变化情况，
+	并记录两种判决时的异常情况（判决电平过大和过小）和判决输出正常时的波形和电平值。
+	
+	\begin{figure}[H]
+		\centering
+		\begin{subfigure}{0.45\linewidth}
+			\centering
+			\includegraphics[width=\linewidth]{figures/判决正常.png}
+			\caption{判决电平正常时波形}
+		\end{subfigure}\hfill
+		\begin{subfigure}{0.45\linewidth}
+			\centering
+			\includegraphics[width=\linewidth]{figures/判决电平过大.png}
+			\caption{判决电平过大时波形}
+		\end{subfigure}\hfill
+		\begin{subfigure}{0.45\linewidth}
+			\centering
+			\includegraphics[width=\linewidth]{figures/判决电平过小.png}
+			\caption{判决电平过小时波形}
+		\end{subfigure}
+		\caption{不同判决电平下 FSK 解调系统输出波形对比}
+	\end{figure}
+	
+	\textbf{实验结果与分析：}
+	
+	由图可见：
+
+		黄色通道（CH1）为基带信号 2P6；
+		青色通道（CH2）为滤波输出 5TP7；
+		紫色通道（CH3）为判决电平 5TP6；
+		蓝色通道（CH4）为判决输出信号 5TP3。
+		
+		当判决电平设置正常时，输出波形与基带信号一致，电平切换准确、无明显误判；
+		当判决电平过大时，部分高电平信号被误判为低电平；当判决电平过小时，部分低电平信号被误判为高电平；综合比较三种情况，判决电平应设置在滤波输出电压摆幅的中值附近，以获得最佳判决效果。
+
+	
+	\item 数据分析：
+	
+	\begin{enumerate}[label=\alph*)]
+		\item 分析解调对判决电平有什么要求？
+		
+		\textbf{答：}
+		判决电平应位于滤波输出（5TP7）高、低电平的中间区域，
+		不可过大或过小，以最小化误判概率。
+		
+		\item 过零点的次数和什么载波频率和频率间隔的有关系？
+		
+		\textbf{答：}
+		过零次数与瞬时频率成正比。对 2FSK：
+		基带“1”对应 $f_1=f_c+\Delta f$，基带“0”对应 $f_2=f_c-\Delta f$。
+		在观测窗口 $T$（或一符号时长 $T_b$）内，过零计数近似
+		\[
+		N_1 \approx k\, f_1 T,\qquad N_0 \approx k\, f_2 T,
+		\]
+		两状态的计数差
+		\[
+		\Delta N \approx k\,(f_1-f_2)T = k\,(2\Delta f)\,T,
+		\]
+		与频率间隔 $\Delta f$ 成正比；在相同 $\Delta f$ 下，$f_c$ 共同抬升 $f_1,f_2$ 也会同比增大全部过零计数，但\emph{两者之差}主要由 $\Delta f$ 决定。
+	\end{enumerate}
+	
+\end{enumerate}
+
+
+\subsection*{(3) 系统性能}
+
+\begin{enumerate}[label=\roman*.]  % 二级编号：i., ii., iii., ...
+	\item FSK 系统眼图观测：  
+	设置基带数据 2P6 为 “511-PN”，速率 “8K”，保证判决输出正常。
+	示波器一个通道接 5TP4，并用这一通道作触发源；
+	另一通道测 5TP7；示波器 \textit{Display} 菜单中余辉设为 20，观测眼图并记录波形。
+	在图上标出眼图的上升时间、下降时间、门限等特征值，改变噪声的值，
+	观察并记录眼图的变化。
+	
+	\begin{figure}[H]
+		\centering
+		\begin{subfigure}{0.51\linewidth}
+			\centering
+			\includegraphics[width=\linewidth]{figures/0噪声时的眼图（标注）.png}
+			\caption{无噪声时的 FSK 系统眼图}
+		\end{subfigure}
+		\hfill
+		\begin{subfigure}{0.46\linewidth}
+			\centering
+			\includegraphics[width=\linewidth]{figures/47噪声时的眼图.png}
+			\caption{加噪声后的 FSK 系统眼图}
+		\end{subfigure}
+		\caption{FSK 系统眼图在不同噪声条件下的观测结果}
+	\end{figure}
+	
+	\textbf{实验结果与分析：}
+	
+	在无噪声条件下，眼图开口清晰、上下轨迹分离明显，
+	此时信号上升沿与下降沿陡峭，门限处波形波动极小，
+	系统同步稳定、误码率极低。
+	
+	当加入噪声后，眼图出现明显收缩与抖动，
+	轨迹边缘变得模糊，开口高度与宽度均减小，
+	说明信号的信噪比下降，判决区间缩小，
+	系统容噪性能减弱。
+	噪声干扰使过渡区抖动增大，可能导致判决错误或符号间串扰。
+	
+	综合来看，眼图的开口大小和清晰度能直观反映系统的性能：
+	开口越大，系统误码率越低；开口越窄，系统容噪性能越差。
+	
+	
+	\item 噪声对 FSK 信道影响：  
+	在保证判决输出正常时，点击实验框图右下方 “误码测试仪” 按钮，
+	配置误码仪代码型 “15-PN”，时钟速率 “8K”，
+	先点击 “同步”，然后按下左侧参数键进行 FSK 系统（载频 128K、频偏 64K）
+	性能测试（测出误码时的信噪比）。
+	鼠标置于噪声源，滚动调节噪声高电子大小。
+	示波器测试噪声源输出电压，测量噪声电平大小。
+	
+	\begin{table}[H]
+		\centering
+		\caption{噪声对 FSK 系统性能的影响测试表}
+		\begin{tabular}{ccccc}
+			\toprule
+			序号 & 基带速率 & 载波幅度 (Vpp) & 出现误码时噪声幅度 (Vpp) & 信噪比（dB） \\
+			\midrule
+			1 & 8K  & 4 & 0.760 & 14.42 \\%临界50
+			2 & 16K & 4 & 0.640 & 15.92 \\%临界44
+			\bottomrule
+		\end{tabular}
+		\vspace{0.5em}
+		
+		\small 注：载波幅度测量：不加噪声时示波器测得的载波幅度；噪声幅度测量：刚出现误码时，示波器测得噪声源输出幅度。
+	\end{table}
+	
+	\textbf{实验结果与分析：}
+	
+	8 kb/s 与 16 kb/s 时信噪比分别约 14.4 dB 与 15.9 dB。  
+	随着码率提高，符号间隔减小，需更高信噪比才能维持正常判决。噪声增大会导致眼图开口收缩、误码率上升，表明 FSK 系统的抗噪性能随码率增加而略有下降。
+	
+	
+	\item 数据分析：
+	
+	\begin{enumerate}[label=\alph*)]
+		\item 噪声对眼图有什么影响？
+		
+		\textbf{答：}
+		随着噪声增大，眼图的开口逐渐缩小，轨迹变得模糊，
+		上下通道交叠，信号过渡区抖动加剧，导致误码率上升，系统抗噪性能明显下降。
+		
+		\item 如何通过眼图衡量系统的性能？
+		
+		\textbf{答：}
+		眼图的开口宽度和高度能直观反映系统性能：
+		开口越大，信号失真越小、同步越稳定、误码率越低；
+		反之，开口变窄或闭合表示码间干扰与噪声加重，
+		系统性能下降。因此，眼图清晰度和开口程度可用于综合评估通信系统的抗噪与判决性能。
+	\end{enumerate}
+	
+\end{enumerate}
+
+\section{问题回答}
+
+\subsection*{1. 2FSK 的解调方式主要有哪些？}
+
+\textbf{答：}
+2FSK（双频移键控）常用的解调方式主要包括以下几种：
+\begin{enumerate}
+	\item \textbf{相干解调：} 通过相干检测器或锁相环（PLL）实现对载波相位的同步，
+	分别与两路本地参考频率 $f_1$、$f_2$ 进行相干比较，判决输出对应的“0”或“1”。
+	相干解调误码率低、性能好，但电路较复杂。
+	\item \textbf{非相干解调：} 不要求与载波相位同步，
+	常用方法有包络检测、滤波积分检测和过零点检测等。
+	其中，\emph{过零点检测法} 通过检测输入信号过零次数判断其频率高低，实现简单，
+	是教学和工程中常见的 FSK 解调方式。
+	\item \textbf{鉴频解调：} 利用频率鉴别器（FM 解调原理），
+	将频率变化转换为幅度变化后再判决，也属于非相干方式。
+\end{enumerate}
+
+
+\subsection*{2. 简述 2FSK 调制的工作原理}
+
+\textbf{答：}
+2FSK 调制通过控制载波频率在两种离散值之间切换来表示二进制信息。
+当基带信号为“1”时，输出载波频率为$f_1 = f_c + \Delta f$;
+当基带信号为“0”时，输出载波频率为$f_2 = f_c - \Delta f,$
+其中 $f_c$ 为载波中心频率，$\Delta f$ 为频率偏移量。
+因此，2FSK 信号可表示为：
+\[
+s(t) =
+\begin{cases}
+	A_c \cos\!\left[2\pi(f_c + \Delta f)t\right], & \text{基带“1”}\\[4pt]
+	A_c \cos\!\left[2\pi(f_c - \Delta f)t\right], & \text{基带“0”}
+\end{cases}
+\]
+这种调制方式通过频率变化而非幅度变化传递信息，抗噪性能优于 ASK，
+频率间隔 $\Delta f$ 的大小影响系统带宽与误码性能。
+
+
+\section{心得体会}
+
+通过本次 FSK 调制与解调实验，我对数字调制系统的工作原理和性能特性有了更直观的认识。  
+在实验过程中，从调制信号的时域与频域观察，到解调过程中的过零点检测、滤波与判决，再到系统性能的眼图与噪声影响测试，
+完整地理解了 2FSK 信号的产生、传输与恢复过程。
+
+通过调节载波频率与频偏，能够清楚地看到频谱的变化；在解调部分，观察到判决电平、滤波参数等对解调结果的影响，
+进一步理解了阈值判决的物理意义。
+在系统性能测试中，通过眼图与误码率测量，深刻体会到信噪比对通信质量的重要性，
+也认识到调制速率、频偏等参数在系统设计中需要平衡抗噪性能与带宽利用率。
+
+总体而言，本实验不仅加深了我对 FSK 调制解调原理的理解，也提高了我使用示波器、误码测试仪等仪表进行系统分析的能力，
+为后续学习更复杂的数字通信系统奠定了良好的基础。
+
+
+\end{document}
